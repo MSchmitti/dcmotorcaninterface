@@ -82,7 +82,7 @@ class ControlCycle : public QObject
         double distSensor; 
 	
 	// pressure sensor
-	double presureValues;
+	double pressureValue;
 
     	//Outputs
     	float motorDutyCycle;
