@@ -275,7 +275,13 @@ void UserInterface::run()
 						cout<<"    "<<setfill(' ')<<setw(10)<<motorDriver->getForceSensor(i,j);
 					}
 					cout<<endl;
-				}			
+				}	
+				cout<<"    PressureSensor:";
+				for (int i = 0; i < N_TEST_LINES; i++)
+				{
+					cout<<"  "<<setfill(' ')<<setw(10)<<motorDriver->getPreSensor(i);
+				}
+				cout<<endl;	
 				/* to adapt if needed
 				cout<<"    ForceMax    :";
 				for (int i = 0; i < N_TEST_LINES; i++)

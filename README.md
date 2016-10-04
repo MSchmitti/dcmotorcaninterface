@@ -4,3 +4,5 @@ This project is an application to handle a test stand with a dc-motor and sensor
 At the beginning this project was written by Alexander.
 
 Now it will be changed by Markus Sch.
+
+How to use the application, read und follow the steps of the readme in the build-folder.

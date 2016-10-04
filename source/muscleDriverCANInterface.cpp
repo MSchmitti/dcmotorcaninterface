@@ -34,6 +34,7 @@ MuscleDriverCANInterface * currentCanInterface;
 void MuscleDriverCANInterface::cyclicProcessor()
 {
 	static int firstTime=1;
+	static int preVal;
 	m_cycleCount++; //cycle counter
 
 	//make a copy of the CAN data, this is safe and contains mutex
@@ -79,6 +80,11 @@ void MuscleDriverCANInterface::cyclicProcessor()
 			controlCycles[i]->forceSensor[j] = (forceSensorGain[(i*N_FORCE_SENSOR_PER_LINE)+j] * nval[(i*N_FORCE_SENSOR_PER_LINE)+j]) + forceSensorZero[(i*N_FORCE_SENSOR_PER_LINE)+j];
 		}		
 
+		// Phidget - pressure sensor(s)
+		// CPhidgetInterfaceKit_getSensorCount(ifKit, &phidget_numSensors); <--------- counted enough?? 
+		CPhidgetInterfaceKit_getSensorValue(ifKit, 1, &preVal);
+		controlCycles[i]->pressureValue = (preVal); 
+
 		// cycle
 		controlCycles[i]->cycle();
 
@@ -96,7 +102,7 @@ void MuscleDriverCANInterface::cyclicProcessor()
 		logFullDataSet(i, m_cycleCount, 
 			controlCycles[i]->xlin, controlCycles[i]->vlin, controlCycles[i]->targetPos, controlCycles[i]->targetSpeed,
 			controlCycles[i]->motorEncoderPosition, controlCycles[i]->forceSensor[0], controlCycles[i]->forceSensor[1], 
-			controlCycles[i]->motorDutyCycle);
+			controlCycles[i]->motorDutyCycle, controlCycles[i]->pressureValue);
 
 		// check if the measurement log is requested
 		if(isInProgressMeasurementLog())
@@ -577,6 +583,11 @@ double MuscleDriverCANInterface::getForceMax(int line)
 double MuscleDriverCANInterface::getDistSensor(int line)
 {
 	return controlCycles[line]->distSensor;
+}
+
+double MuscleDriverCANInterface::getPreSensor(int line)
+{
+	return controlCycles[line]->pressureValue;
 }
 
 int16_t MuscleDriverCANInterface::getMotorDisplacement(int line)
