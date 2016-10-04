@@ -27,7 +27,7 @@
 	void logFullDataSet(int line, unsigned int m_cycleCount,
 		double xlin, double vlin, double targetPos, double targetSpeed,
 		int32_t motorEncoderPosition, double forceSensor0, double forceSensor1, 
-		float motorDutyCycle);
+		float motorDutyCycle, double pressureValue);
 
 	void setupMeasurementLog(string* filename);
 	int isReadyMeasurementLog();
