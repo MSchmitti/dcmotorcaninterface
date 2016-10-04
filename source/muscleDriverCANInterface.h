@@ -89,6 +89,7 @@ class MuscleDriverCANInterface : public QObject
      long getCounter(int line);
      double getForceSensor(int line, int id);
      double getDistSensor(int line);
+     double getPreSensor(int line);
      int16_t getMotorDisplacement(int line);
      int32_t getMotorEncoderPosition(int line);
      std::string getErrorCode(int line);
