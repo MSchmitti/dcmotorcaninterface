@@ -80,6 +80,9 @@ class ControlCycle : public QObject
         */
         // phidget distance sensor
         double distSensor; 
+	
+	// pressure sensor
+	double presureValues;
 
     	//Outputs
     	float motorDutyCycle;
