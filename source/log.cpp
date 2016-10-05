@@ -21,6 +21,8 @@ using namespace std;
 int fullLogLine;
 fstream fullLog;
 
+static int initDesc = 1;
+
 // Measurement log (during RUN)
 int measurementLogOpen 			= 0;
 int measurementLogReady 		= 0;
@@ -166,6 +168,34 @@ void logFullDataSet(int line, unsigned int m_cycleCount,
 	double forceSensor0, double forceSensor1, 
 	float motorDutyCycle, double pressureValue)
 {
+	
+	// init and write fulllog description/title of values
+	if (initDesc == 1)
+	{
+	
+
+		fullLog <<setfill(' ')<<setw(10)<<line;
+		
+		fullLog <<setfill(' ')<<setw(10)<<'m_cycleCount';
+		fullLog <<","<<setfill(' ')<<setw(10)<<'xlin';
+		
+		fullLog <<","<<setfill(' ')<<setw(10)<<setfill('vlin');
+		fullLog <<","<<setfill(' ')<<setw(10)<<setfill('targetPos');
+		fullLog <<","<<setfill(' ')<<setfill('targetSpeed');
+		fullLog <<","<<setfill(' ')<<setfill('motorEncoderPosition');
+		fullLog <<","<<setfill(' ')<<setfill('motorDutyCycle');
+		//fullLog <<","<<setfill(' ')<<setw(10)<<setfill('motorOmega');
+		//fullLog <<","<<setfill(' ')<<setw(10)<<setfill('motorDisplacement');
+		//fullLog <<","<<setfill(' ')<<setw(10)<<setfill('motorCurrent');
+		fullLog <<","<<setfill(' ')<<setfill('forceSensor0');
+		fullLog <<","<<setfill(' ')<<setfill('forceSensor1');
+		//fullLog <<","<<setfill(' ')<<setw(10)<<setfill('distSensor');
+		fullLog <<","<<setfill(' ')<<setfill('pressureValue');
+		fullLog <<endl;
+		sleep(500);
+		initDesc = 2;
+	
+	
 	if (fullLogLine == line)
 	{
 		/*fullLog<<m_cycleCount<<","<<motorEncoderPosition<<","<<motorOmega<<","<<motorDisplacement
