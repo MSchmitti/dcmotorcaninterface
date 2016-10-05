@@ -21,7 +21,7 @@ using namespace std;
 int fullLogLine;
 fstream fullLog;
 
-static int initDesc = 1;
+//static int initDesc = 1;
 
 // Measurement log (during RUN)
 int measurementLogOpen 			= 0;
@@ -168,7 +168,7 @@ void logFullDataSet(int line, unsigned int m_cycleCount,
 	double forceSensor0, double forceSensor1, 
 	float motorDutyCycle, double pressureValue)
 {
-	
+	/*
 	// init and write fulllog description/title of values
 	if (initDesc == 1)
 	{
@@ -194,7 +194,7 @@ void logFullDataSet(int line, unsigned int m_cycleCount,
 		fullLog <<endl;
 		sleep(500);
 		initDesc = 2;
-	
+	 }*/
 	
 	if (fullLogLine == line)
 	{
