@@ -183,14 +183,14 @@ void ControlCycle::traj_lin_friction(double tcur)
 	// check if currently in the positive or negative direction
 	if(tcur < thp)
 	{
-		dir 		= 1;
+		dir 		= -1;
 		x_offset  	= 0.0;
 	}
 	else
 	{	
 		tcur   		= tcur - thp;
-		dir 		= -1;
-		x_offset  	= lmax;
+		dir 		= 1;
+		x_offset  	= -lmax;
 	}
 
 	// intermediate positions
