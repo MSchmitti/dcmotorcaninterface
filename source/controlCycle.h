@@ -65,8 +65,8 @@ class ControlCycle : public QObject
         /* SENSORS */
         // motor driver - motor sensors
         int32_t motorEncoderPosition;
-	  	float   motorOmega;
-		int16_t motorCurrent;
+	float   motorOmega;
+	int16_t motorCurrent;
         int32_t motorCurrentSum;
         int16_t motorCurrentMean;
         // motor driver - diplacement sensor
@@ -93,7 +93,10 @@ class ControlCycle : public QObject
         // General
         int32_t         motorInitPosition; 
         unsigned long   motorCycleOffset;
-        
+	bool            initDistFin;
+        double          forceInit;                  
+        double          currentForce;              
+	
         // Trajectories
         bool    run_param_initialized;
         int     run_traj_period_ncount;     // nb of count for one period (1 count = 5ms)
