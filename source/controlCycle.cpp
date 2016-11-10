@@ -27,7 +27,7 @@
 // INIT min/max target position and speed
 #define INIT_DIST_MIN 5.0
 #define INIT_DIST_MAX 5.5
-#define INIT_DUTY_CYCLE 300			// automatic initialization
+#define INIT_DUTY_CYCLE 400			// automatic initialization
 
 // STOP conditions
 #define CABLE_BREAK_MIN_FORCE 350
@@ -262,9 +262,9 @@ void ControlCycle::cycle()
 			{
 				motorDutyCycle = -INIT_DUTY_CYCLE;
 			}
-			else if (distSensor > INIT_DIST_MAX)
+			else if (distSensor > (INIT_DIST_MAX - 0.03))		// to stop after arraving the border
 			{
-				motorDutyCycle = -(INIT_DUTY_CYCLE - 100);
+				motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
 			}
 			else
 			{
