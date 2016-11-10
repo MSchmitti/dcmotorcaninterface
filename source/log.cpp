@@ -125,13 +125,14 @@ void stopMeasurementLog()
 }
 
 // write log entry
-void performMeasurementLog(unsigned int m_cycleCount, double targetPos, int32_t motorEncoderPos, double forceSensor, int16_t posSensor)
+void performMeasurementLog(unsigned int m_cycleCount, double targetPos, int32_t motorEncoderPos, double forceSensor, int16_t posSensor, double pressureValue)
 {
 	measurementLog <<setfill(' ')<<setw(10)<<m_cycleCount;
 	measurementLog <<","<<setfill(' ')<<setw(10)<<targetPos;
 	measurementLog <<","<<setfill(' ')<<setw(10)<<motorEncoderPos;
 	measurementLog <<","<<setfill(' ')<<setw(10)<<forceSensor;
 	measurementLog <<","<<setfill(' ')<<setw(10)<<posSensor;
+	measurementLog <<","<<setfill(' ')<<setw(10)<<pressureValue;
 	measurementLog <<endl;
 }
 

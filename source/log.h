@@ -36,6 +36,6 @@
 	int requestMeasurementLog();
 	void startMeasurementLog();
 	void stopMeasurementLog();
-	void performMeasurementLog(unsigned int m_cycleCount, double targetPos, int32_t motorEncoderPos, double forceSensor, int16_t posSensor);
+	void performMeasurementLog(unsigned int m_cycleCount, double targetPos, int32_t motorEncoderPos, double forceSensor, int16_t posSensor, double pressureValue);
 
 #endif /* LOG_H_ */

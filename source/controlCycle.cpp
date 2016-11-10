@@ -27,10 +27,10 @@
 // INIT min/max target position and speed
 #define INIT_DIST_MIN 5.0
 #define INIT_DIST_MAX 5.5
-#define INIT_DUTY_CYCLE 0			// manual initialization
+#define INIT_DUTY_CYCLE 400			// automatic initialization
 
 // STOP conditions
-#define CABLE_BREAK_MIN_FORCE 300
+#define CABLE_BREAK_MIN_FORCE 350
 #define MAX_FORCE 900
 #define MAX_MEAN_CURRENT 400
 
@@ -66,16 +66,16 @@ ControlCycle::ControlCycle(int i)
 	motorCurrentMean = 0;
 	
 	stopCommand = false;
-    initCommand = false;
-    pauseCommand = false;
-    resumeCommand = false;
+    	initCommand = false;
+    	pauseCommand = false;
+    	resumeCommand = false;
 
     // Tecchnical data
-    motorSpeedConstant 	= 1.0; 			// RPM/V
+    	motorSpeedConstant 	= 1.0; 			// RPM/V
 	gearingTranslation 	= 1.0;			
 	encoderCountPerRev 	= 1;
 	ballScrewLead 		= 1.0;			// mm
-	k_lin2rot			= 1.0;			// enc_count / mm
+	k_lin2rot		= 1.0;			// enc_count / mm
 
 	// Trajectories
 	run_param_initialized = false;
@@ -248,13 +248,23 @@ void ControlCycle::cycle()
 
 		case STATE_INIT: //Init
 			// aim for init position
-			if (distSensor < INIT_DIST_MIN)
+			if (distSensor < (INIT_DIST_MIN - 0.5))
 			{
 				motorDutyCycle = INIT_DUTY_CYCLE;
 			} 
-			else if (distSensor > INIT_DIST_MAX)
+
+			else if (distSensor < INIT_DIST_MIN )
+			{
+				motorDutyCycle = (INIT_DUTY_CYCLE - 100);
+			} 
+
+			else if (distSensor > (INIT_DIST_MAX + 0.5))
 			{
 				motorDutyCycle = -INIT_DUTY_CYCLE;
+			}
+			else if (distSensor > (INIT_DIST_MAX - 0.03))		// to stop after arraving the border
+			{
+				motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
 			}
 			else
 			{
