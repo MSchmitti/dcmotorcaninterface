@@ -245,6 +245,7 @@ void ControlCycle::cycle()
 				state = STATE_INIT;
 				// reset Flag
 				initCommand = false;
+				initDistFin = 0;
 				// log state change
 			}
 			break;
@@ -252,40 +253,45 @@ void ControlCycle::cycle()
 		case STATE_INIT: //Init
 			// aim for init position
 			if ((distSensor < (INIT_DIST_MIN - 0.5)) && (initDistFin == 0))
-			{
-				motorDutyCycle = INIT_DUTY_CYCLE;
-			} 
+				{
+					motorDutyCycle = INIT_DUTY_CYCLE;
+				} 
 
 			else if ((distSensor < INIT_DIST_MIN ) && (initDistFin == 0))
-			{
-				motorDutyCycle = (INIT_DUTY_CYCLE - 100);
-			} 
+				{
+					motorDutyCycle = (INIT_DUTY_CYCLE - 100);
+				}	 
 
 			else if ((distSensor > (INIT_DIST_MAX + 0.5)) && (initDistFin == 0))
-			{
-				motorDutyCycle = -INIT_DUTY_CYCLE;
-			}
-			else if ((distSensor > (INIT_DIST_MAX - 0.03)) && (initDistFin == 0))		// to stop after arraving the border
-			{
-				motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
-			}
+				{
+					motorDutyCycle = -INIT_DUTY_CYCLE;
+				}
+			// to stop after arraving the border
+			else if ((distSensor > (INIT_DIST_MAX - 0.03)) && (initDistFin == 0))		
+				{
+					motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
+				}
 			else if ((distSensor > INIT_DIST_MIN) && (distSensor < INIT_DIST_MAX) && (initDistFin == 0))
-			{	//Init Dist
-				initDistFin = 1;
-				forceInit = forceSensor[0];
-				currentForce = forceSensor[0];
-			}			
+				{	
+					//Init Dist
+					initDistFin = 1;
+					forceInit = forceSensor[0];
+					currentForce = forceSensor[0];
+				}			
 
 			else if ((currentForce < (forceInit + INIT_FORCE_MAX)) && (currentForce > (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
-			//if (initDistFin == 0)
 				{
-					/*if (currentForce > (forceInit + INIT_FORCE_MIN))
-					{*/
 						motorDutyCycle = -300;
 						currentForce = forceSensor[0];
-				}
 
-			else if (currentForce < -10)			//pressure is negative
+				}
+			else if((currentForce > (forceInit + INIT_FORCE_MAX)) || (currentForce < (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
+				{				
+						initForcePos = motorEncoderPosition/4300;
+						initDistFin = 2;
+				}
+			//pressure is negative
+			else if (currentForce < -10)			
 				{
 					motorDutyCycle = 0;
 				}
@@ -293,12 +299,17 @@ void ControlCycle::cycle()
 				{
 					motorDutyCycle = 0;
 				}			
+			else if (initDistFin == 2 && ((motorEncoderPosition/4300) < (initForcePos + 1) ))	
+				{		
+					motorDutyCycle = 300;
+				} 
 			else
-				{	//Init completed
+				{	
+				//Init completed
 				motorDutyCycle = 0;
 				motorInitPosition = motorEncoderPosition;
-				state = STATE_PAUSE;
 				currentForce = forceSensor[0];
+				state = STATE_PAUSE;
 				}
 			
 			if (stopCommand)
