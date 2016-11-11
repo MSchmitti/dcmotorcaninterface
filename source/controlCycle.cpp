@@ -274,14 +274,11 @@ void ControlCycle::cycle()
 				initDistFin = 1;
 				forceInit = forceSensor[0];
 				currentForce = forceSensor[0];
-				printf("forceInit %f \n", forceInit);
-				printf("currentForce %f\n", currentForce);
 			}			
 
 			else if ((currentForce < (forceInit + INIT_FORCE_MAX)) && (currentForce > (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
 			//if (initDistFin == 0)
 				{
-					printf("first %lf\n", currentForce);
 					/*if (currentForce > (forceInit + INIT_FORCE_MIN))
 					{*/
 						motorDutyCycle = -300;
@@ -292,14 +289,15 @@ void ControlCycle::cycle()
 				{
 					motorDutyCycle = 0;
 				}
-
+			else if (currentForce > 10)
+				{
+					motorDutyCycle = 0;
+				}			
 			else
 				{	//Init completed
 				motorDutyCycle = 0;
 				motorInitPosition = motorEncoderPosition;
 				state = STATE_PAUSE;
-
-				printf("last %lf\n", currentForce);
 				currentForce = forceSensor[0];
 				}
 			
