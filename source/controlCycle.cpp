@@ -28,7 +28,7 @@
 #define INIT_DIST_MIN 5.0
 #define INIT_DIST_MAX 5.5
 #define INIT_DUTY_CYCLE 400			// automatic initialization
-#define INIT_FORCE_MIN -0.5
+#define INIT_FORCE_MIN -0.8			// there is a difference between pushing an pulling the force sensor
 #define INIT_FORCE_MAX  0.5
 
 // STOP conditions
