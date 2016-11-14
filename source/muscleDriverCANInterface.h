@@ -128,6 +128,8 @@ class MuscleDriverCANInterface : public QObject
 	// sensor settings
 	double forceSensorGain[N_FORCE_SENSORS];
 	double forceSensorZero[N_FORCE_SENSORS];
+	double pressureSensorGain;
+	double pressureSensorZero;
 	// hardware settings
 	int motorCombiConfig[N_TEST_LINES];
 	double ballScrewLead[N_TEST_LINES];
