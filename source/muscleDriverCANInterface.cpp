@@ -83,7 +83,8 @@ void MuscleDriverCANInterface::cyclicProcessor()
 		// Phidget - pressure sensor(s)
 		// CPhidgetInterfaceKit_getSensorCount(ifKit, &phidget_numSensors); <--------- counted enough?? 
 		CPhidgetInterfaceKit_getSensorValue(ifKit, 1, &preVal);
-		controlCycles[i]->pressureValue = (preVal * pressureSensorGain + pressureSensorZero); 	// (preVal/45)  formula http://www.phidgets.com/docs/1132_User_Guide
+		// to convert the value to bar: pressureBar = (pressureValue/45-4)*10/16
+		controlCycles[i]->pressureValue = ((preVal / pressureSensorGain + pressureSensorZero)*10/16); 	// (preVal/45)  formula http://www.phidgets.com/docs/1132_User_Guide
 
 		// cycle
 		controlCycles[i]->cycle();
