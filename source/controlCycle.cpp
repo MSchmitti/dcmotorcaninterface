@@ -33,7 +33,7 @@
 
 // STOP conditions
 #define CABLE_BREAK_MIN_FORCE 350
-#define MAX_FORCE 900
+#define MAX_FORCE 850
 #define MAX_MEAN_CURRENT 400
 
 // PD-Controller
