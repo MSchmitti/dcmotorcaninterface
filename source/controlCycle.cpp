@@ -34,6 +34,7 @@
 // STOP conditions
 #define CABLE_BREAK_MIN_FORCE 350
 #define MAX_FORCE 850
+#define MIN_FORCE -850
 #define MAX_MEAN_CURRENT 400
 
 // PD-Controller
@@ -396,6 +397,22 @@ void ControlCycle::cycle()
 			/* TRANSITIONS TO STOP STATE */
 			// check if too high force
 			if (forceSensor[0] >= MAX_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force to high";
+			}
+			//pressure is negative
+			if (forceSensor[0] <= MIN_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force to high";
+			}
+			if (forceSensor[1] >= MAX_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force to high";
+			}
+			if (forceSensor[1] <= MIN_FORCE)
 			{
 				state = STATE_STOP;
 				errorCode = "Force to high";
