@@ -110,7 +110,7 @@ void MuscleDriverCANInterface::cyclicProcessor()
 		{
 			// perform logging
 			performMeasurementLog(m_cycleCount, controlCycles[i]->targetPos, controlCycles[i]->motorEncoderPosition,
-				controlCycles[i]->forceSensor[0], controlCycles[i]->motorDisplacement, controlCycles[i]->pressureValue);
+				controlCycles[i]->forceSensor[0], controlCycles[i]->forceSensor[1], controlCycles[i]->motorDisplacement, controlCycles[i]->pressureValue);
 
 			// if not in state run anymore, stop logging
 			if(controlCycles[i]->state != STATE_RUN)
