@@ -252,69 +252,76 @@ void ControlCycle::cycle()
 				// log state change
 			}
 			break;
-
+			
 		case STATE_INIT: //Init
 			// aim for init position
-			if ((distSensor < (INIT_DIST_MIN - 0.5)) && (initDistFin == 0))
+			if (initDistFin == 0)
+			{
+
+
+				if ((distSensor < (INIT_DIST_MIN - 0.5)))
 				{
 					motorDutyCycle = INIT_DUTY_CYCLE;
 				} 
 
-			else if ((distSensor < INIT_DIST_MIN ) && (initDistFin == 0))
+				else if ((distSensor < INIT_DIST_MIN ))
 				{
 					motorDutyCycle = (INIT_DUTY_CYCLE - 100);
 				}	 
 
-			else if ((distSensor > (INIT_DIST_MAX + 0.5)) && (initDistFin == 0))
+				else if ((distSensor > (INIT_DIST_MAX + 0.5)))
 				{
 					motorDutyCycle = -INIT_DUTY_CYCLE;
 				}
-			// to stop after arraving the border
-			else if ((distSensor > (INIT_DIST_MAX - 0.03)) && (initDistFin == 0))		
+				// to stop after arraving the border
+				else if ((distSensor > (INIT_DIST_MAX - 0.03)))		
 				{
 					motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
 				}
-			else if ((distSensor > INIT_DIST_MIN) && (distSensor < INIT_DIST_MAX) && (initDistFin == 0))
+				else if ((distSensor > INIT_DIST_MIN) && (distSensor < INIT_DIST_MAX))
 				{	
 					//Init Dist
 					initDistFin = 1;
 					forceInit = forceSensor[0];
 					currentForce = forceSensor[0];
-				}			
-
-			else if ((currentForce < (forceInit + INIT_FORCE_MAX)) && (currentForce > (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
+				}
+			}
+			else if (initDistFin == 1)	
+			{
+				if ((currentForce < (forceInit + INIT_FORCE_MAX)) && (currentForce > (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
 				{
 						motorDutyCycle = -300;
 						currentForce = forceSensor[0];
 
 				}
-			else if((currentForce > (forceInit + INIT_FORCE_MAX)) || (currentForce < (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
-				{				
-						initForcePos = motorEncoderPosition/4300;
-						initDistFin = 2;
+				else 
+				{		
+					motorDutyCycle = -0;	
+					initForcePos = motorEncoderPosition/4300;
+					initDistFin = 2;
 				}
+			}
+
 			//pressure is negative
 			else if (currentForce < -10)			
-				{
-					motorDutyCycle = 0;
-				}
+			{
+				motorDutyCycle = 0;
+			}
 			else if (currentForce > 10)
-				{
-					motorDutyCycle = 0;
-				}			
+			{
+				motorDutyCycle = 0;
+			}			
 			else if (initDistFin == 2 && ((motorEncoderPosition/4300) < (initForcePos + 1) ))	
-				{		
-					motorDutyCycle = 300;
-				} 
+			{		
+				motorDutyCycle = 300;	
+			} 
 			else
-				{	
+			{
 				//Init completed
 				motorDutyCycle = 0;
 				motorInitPosition = motorEncoderPosition;
-				currentForce = forceSensor[0];
 				state = STATE_PAUSE;
-				}
-			
+			}
 			if (stopCommand)
 			{
 				state = STATE_STOP;
