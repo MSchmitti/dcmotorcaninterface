@@ -28,10 +28,15 @@
 #define INIT_DIST_MIN 5.0
 #define INIT_DIST_MAX 5.5
 #define INIT_DUTY_CYCLE 400			// automatic initialization
+#define INIT_FORCE_MIN -0.8			// there is a difference between pushing an pulling the force sensor
+#define INIT_FORCE_MAX  0.5
 
 // STOP conditions
 #define CABLE_BREAK_MIN_FORCE 350
-#define MAX_FORCE 900
+#define MAX_FORCE 850
+#define MIN_FORCE -850
+#define MAX_PRESSURE 790			// 790 equates to 8.47222 bar
+#define MIN_PRESSURE -790	
 #define MAX_MEAN_CURRENT 400
 
 // PD-Controller
@@ -64,6 +69,7 @@ ControlCycle::ControlCycle(int i)
 	olderror = 0;
 	motorCurrentSum = 0;
 	motorCurrentMean = 0;
+	initDistFin = 0;			//<---- NEW  //printf("initDistFin %d \n", initDistFin);
 	
 	stopCommand = false;
     	initCommand = false;
@@ -242,30 +248,73 @@ void ControlCycle::cycle()
 				state = STATE_INIT;
 				// reset Flag
 				initCommand = false;
+				initDistFin = 0;
 				// log state change
 			}
 			break;
-
+			
 		case STATE_INIT: //Init
 			// aim for init position
-			if (distSensor < (INIT_DIST_MIN - 0.5))
+			if (initDistFin == 0)
 			{
-				motorDutyCycle = INIT_DUTY_CYCLE;
-			} 
 
-			else if (distSensor < INIT_DIST_MIN )
-			{
-				motorDutyCycle = (INIT_DUTY_CYCLE - 100);
-			} 
 
-			else if (distSensor > (INIT_DIST_MAX + 0.5))
-			{
-				motorDutyCycle = -INIT_DUTY_CYCLE;
+				if ((distSensor < (INIT_DIST_MIN - 0.5)))
+				{
+					motorDutyCycle = INIT_DUTY_CYCLE;
+				} 
+
+				else if ((distSensor < INIT_DIST_MIN ))
+				{
+					motorDutyCycle = (INIT_DUTY_CYCLE - 100);
+				}	 
+
+				else if ((distSensor > (INIT_DIST_MAX + 0.5)))
+				{
+					motorDutyCycle = -INIT_DUTY_CYCLE;
+				}
+				// to stop after arraving the border
+				else if ((distSensor > (INIT_DIST_MAX - 0.03)))		
+				{
+					motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
+				}
+				else if ((distSensor > INIT_DIST_MIN) && (distSensor < INIT_DIST_MAX))
+				{	
+					//Init Dist
+					initDistFin = 1;
+					forceInit = forceSensor[0];
+					currentForce = forceSensor[0];
+				}
 			}
-			else if (distSensor > (INIT_DIST_MAX - 0.03))		// to stop after arraving the border
+			else if (initDistFin == 1)	
 			{
-				motorDutyCycle = -(INIT_DUTY_CYCLE - 0);
+				if ((currentForce < (forceInit + INIT_FORCE_MAX)) && (currentForce > (forceInit + INIT_FORCE_MIN)) && (initDistFin == 1))
+				{
+						motorDutyCycle = -300;
+						currentForce = forceSensor[0];
+
+				}
+				else 
+				{		
+					motorDutyCycle = -0;	
+					initForcePos = motorEncoderPosition/4300;
+					initDistFin = 2;
+				}
 			}
+
+			//pressure is negative
+			else if (currentForce < -10)			
+			{
+				motorDutyCycle = 0;
+			}
+			else if (currentForce > 10)
+			{
+				motorDutyCycle = 0;
+			}			
+			else if (initDistFin == 2 && ((motorEncoderPosition/4300) < (initForcePos + 1) ))	
+			{		
+				motorDutyCycle = 300;	
+			} 
 			else
 			{
 				//Init completed
@@ -355,11 +404,47 @@ void ControlCycle::cycle()
 			}
 
 			/* TRANSITIONS TO STOP STATE */
-			// check if too high force
+			// check if tho force is to high
 			if (forceSensor[0] >= MAX_FORCE)
 			{
 				state = STATE_STOP;
-				errorCode = "Force to high";
+				errorCode = "Force is to high";
+			}
+			if (forceSensor[0] <= MIN_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force is to high";
+			}
+			if (forceSensor[1] >= MAX_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force is to high";
+			}
+			if (forceSensor[1] <= MIN_FORCE)
+			{
+				state = STATE_STOP;
+				errorCode = "Force is to high";
+			}
+			// check if the pressure is to high
+			if (pressureValue >= MAX_PRESSURE)
+			{
+				state = STATE_STOP;
+				errorCode = "Pressure is to high";
+			}
+			if (pressureValue <= MIN_PRESSURE)
+			{
+				state = STATE_STOP;
+				errorCode = "Pressure is to high";
+			}
+			if (pressureValue >= MAX_PRESSURE)
+			{
+				state = STATE_STOP;
+				errorCode = "Pressure is to high";
+			}
+			if (pressureValue <= MIN_PRESSURE)
+			{
+				state = STATE_STOP;
+				errorCode = "Pressure is to high";
 			}
 			// check if incoming stop command
 			if (stopCommand)

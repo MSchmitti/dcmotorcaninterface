@@ -83,7 +83,8 @@ void MuscleDriverCANInterface::cyclicProcessor()
 		// Phidget - pressure sensor(s)
 		// CPhidgetInterfaceKit_getSensorCount(ifKit, &phidget_numSensors); <--------- counted enough?? 
 		CPhidgetInterfaceKit_getSensorValue(ifKit, 1, &preVal);
-		controlCycles[i]->pressureValue = (preVal/45); 	//formula http://www.phidgets.com/docs/1132_User_Guide
+		// to convert the value to bar: pressureBar = (pressureValue/45-4)*10/16
+		controlCycles[i]->pressureValue = ((preVal / pressureSensorGain + pressureSensorZero)*10/16); 	// (preVal/45)  formula http://www.phidgets.com/docs/1132_User_Guide
 
 		// cycle
 		controlCycles[i]->cycle();
@@ -109,7 +110,7 @@ void MuscleDriverCANInterface::cyclicProcessor()
 		{
 			// perform logging
 			performMeasurementLog(m_cycleCount, controlCycles[i]->targetPos, controlCycles[i]->motorEncoderPosition,
-				controlCycles[i]->forceSensor[0], controlCycles[i]->motorDisplacement, controlCycles[i]->pressureValue);
+				controlCycles[i]->forceSensor[0], controlCycles[i]->forceSensor[1], controlCycles[i]->motorDisplacement, controlCycles[i]->pressureValue);
 
 			// if not in state run anymore, stop logging
 			if(controlCycles[i]->state != STATE_RUN)
@@ -423,7 +424,16 @@ int MuscleDriverCANInterface::readInit()
 			sprintf(str_fs_data,"%s/ForceSensorZero%d","sensors",((i*N_FORCE_SENSOR_PER_LINE)+j));
 			forceSensorZero[(i*N_FORCE_SENSOR_PER_LINE)+j] = settings.value(str_fs_data, 0).toDouble();			
 		}
+		
+		//pressure sensor config
 
+		char str_ps_data [100];
+		sprintf(str_ps_data,"%s/PressureSensorGain","sensors");
+		pressureSensorGain = settings.value(str_ps_data, 1).toDouble();
+		
+		sprintf(str_ps_data,"%s/PressureSensorZero","sensors");
+		pressureSensorZero = settings.value(str_ps_data, 3).toDouble();		
+		
 		// hardware config (motor and ball screw)
 		char str_hc_data [100];
 
